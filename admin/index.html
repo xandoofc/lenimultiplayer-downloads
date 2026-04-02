@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Leni Multiplayer — Admin</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0D1011;--surface:#16191A;--surface2:#1E2224;
+    --green:#1FCC58;--blue:#3B82F6;--red:#EF4444;--orange:#F97316;--purple:#A855F7;
+    --text:#FFFFFF;--dim:#8A8D91;--border:rgba(255,255,255,0.07);
+  }
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+  /* ─── LOGIN ─── */
+  #login{display:flex;align-items:center;justify-content:center;min-height:100vh;
+    background:radial-gradient(ellipse at 30% 20%,rgba(31,204,88,.08) 0%,transparent 60%)}
+  .login-card{background:var(--surface);border:1px solid var(--border);border-radius:28px;
+    padding:48px;width:100%;max-width:420px;text-align:center;
+    box-shadow:0 40px 80px rgba(0,0,0,.5)}
+  .login-card .logo{width:72px;height:72px;background:linear-gradient(135deg,var(--green),#0F172A);
+    border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;
+    box-shadow:0 0 30px rgba(31,204,88,.3)}
+  .login-card .logo svg{width:36px;height:36px;stroke:#fff;fill:none;stroke-width:2}
+  .login-card h1{font-size:22px;font-weight:900;letter-spacing:-0.5px;margin-bottom:6px}
+  .login-card p{color:var(--dim);font-size:13px;margin-bottom:36px}
+  .field{width:100%;padding:16px 20px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);
+    border-radius:14px;font-size:16px;font-family:inherit;color:var(--text);outline:none;transition:.2s}
+  .field:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(31,204,88,.15)}
+  .field::placeholder{color:var(--dim)}
+  .btn{width:100%;padding:16px;background:var(--green);border:none;border-radius:14px;
+    font-family:inherit;font-size:14px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+    color:#000;cursor:pointer;margin-top:16px;transition:.2s;
+    box-shadow:0 0 20px rgba(31,204,88,.3)}
+  .btn:hover{background:#22e062;transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn.danger{background:var(--red);color:#fff;box-shadow:0 0 20px rgba(239,68,68,.3)}
+  .btn.danger:hover{background:#f87171}
+  .btn.secondary{background:transparent;border:1.5px solid var(--border);color:var(--dim);box-shadow:none}
+  .btn.secondary:hover{border-color:var(--text);color:var(--text)}
+  .err{color:var(--red);font-size:13px;margin-top:12px;min-height:20px}
+
+  /* ─── DASHBOARD ─── */
+  #app{display:none;min-height:100vh}
+  .layout{display:flex;min-height:100vh}
+
+  /* SIDEBAR */
+  .sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);
+    display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0}
+  .sidebar-header{padding:28px 24px 20px;border-bottom:1px solid var(--border)}
+  .sidebar-logo{display:flex;align-items:center;gap:14px}
+  .sidebar-logo .logo-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--green),#0F172A);
+    border-radius:14px;display:flex;align-items:center;justify-content:center}
+  .sidebar-logo .logo-icon svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2}
+  .sidebar-logo .brand{font-size:14px;font-weight:900;letter-spacing:.5px}
+  .sidebar-logo .brand span{display:block;font-size:10px;color:var(--green);font-weight:700;letter-spacing:1.5px}
+  .nav{flex:1;padding:16px 12px}
+  .nav-section{font-size:9px;font-weight:800;letter-spacing:2px;color:var(--dim);padding:0 12px;margin-bottom:8px;margin-top:20px}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;
+    cursor:pointer;transition:.2s;font-size:13px;font-weight:600;color:var(--dim);margin-bottom:4px}
+  .nav-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+  .nav-item.active{background:rgba(31,204,88,.1);color:var(--green)}
+  .nav-item svg{width:18px;height:18px;flex-shrink:0}
+  .sidebar-footer{padding:20px;border-top:1px solid var(--border)}
+  .online-dot{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:6px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(31,204,88,.6)}50%{box-shadow:0 0 0 6px rgba(31,204,88,0)}}
+
+  /* MAIN */
+  .main{flex:1;padding:32px;max-width:calc(100vw - 260px);overflow-x:hidden}
+  .page{display:none}
+  .page.active{display:block}
+  .page-header{margin-bottom:32px}
+  .page-title{font-size:28px;font-weight:900;letter-spacing:-0.5px;margin-bottom:6px}
+  .page-sub{color:var(--dim);font-size:14px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:20px}
+  .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .card-title{font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--dim)}
+  .card-title.green{color:var(--green)}
+  .row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  .col2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:700px){.col2{grid-template-columns:1fr}}
+
+  /* TOGGLE */
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:16px 0;
+    border-bottom:1px solid var(--border)}
+  .toggle-row:last-child{border-bottom:none;padding-bottom:0}
+  .toggle-label{font-size:14px;font-weight:600}
+  .toggle-sub{font-size:11px;color:var(--dim);margin-top:2px}
+  .toggle{position:relative;width:48px;height:26px;flex-shrink:0}
+  .toggle input{opacity:0;width:0;height:0}
+  .slider{position:absolute;inset:0;background:#2A2E30;border-radius:13px;cursor:pointer;transition:.3s}
+  .slider:before{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;
+    left:3px;bottom:3px;transition:.3s}
+  .toggle input:checked + .slider{background:var(--green)}
+  .toggle input:checked + .slider:before{transform:translateX(22px)}
+
+  /* INPUT */
+  .input-group{margin-bottom:16px}
+  .label{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--dim);text-transform:uppercase;margin-bottom:8px}
+  .input{width:100%;padding:12px 16px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);
+    border-radius:12px;font-family:inherit;font-size:14px;color:var(--text);outline:none;transition:.2s}
+  .input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(31,204,88,.1)}
+  .input::placeholder{color:var(--dim)}
+  textarea.input{resize:vertical;min-height:100px;line-height:1.5}
+  .input-row{display:flex;gap:10px}
+  .input-row .input{flex:1}
+  .btn-sm{padding:10px 18px;border:none;border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;
+    letter-spacing:.5px;cursor:pointer;transition:.2s;white-space:nowrap}
+  .btn-sm.green{background:var(--green);color:#000;box-shadow:0 0 12px rgba(31,204,88,.3)}
+  .btn-sm.green:hover{background:#22e062}
+  .btn-sm.red{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+  .btn-sm.red:hover{background:rgba(239,68,68,.2)}
+  .btn-sm.blue{background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
+
+  /* TAGS / LIST */
+  .tag-list{display:flex;flex-wrap:wrap;gap:8px;min-height:40px;padding:12px;
+    background:rgba(255,255,255,.02);border-radius:12px;border:1px dashed var(--border)}
+  .tag{display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(255,255,255,.06);
+    border-radius:8px;font-size:12px;font-weight:600}
+  .tag.red{background:rgba(239,68,68,.1);color:var(--red)}
+  .tag.green{background:rgba(31,204,88,.1);color:var(--green)}
+  .tag.blue{background:rgba(59,130,246,.1);color:var(--blue)}
+  .tag button{background:none;border:none;cursor:pointer;color:inherit;opacity:.6;
+    font-size:14px;line-height:1;padding:0;display:flex}
+  .tag button:hover{opacity:1}
+  .empty-tag{color:var(--dim);font-size:12px;font-style:italic}
+
+  /* STAT CARDS */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-bottom:24px}
+  .stat{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .stat-label{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
+  .stat-value{font-size:26px;font-weight:900}
+  .stat-value.green{color:var(--green)}
+  .stat-value.red{color:var(--red)}
+  .stat-value.blue{color:var(--blue)}
+  .stat-value.orange{color:var(--orange)}
+
+  /* ROOM LIST */
+  .room-row{display:flex;align-items:center;gap:16px;padding:16px;
+    background:var(--surface2);border-radius:14px;margin-bottom:10px}
+  .room-pin{font-size:18px;font-weight:900;letter-spacing:2px;color:var(--green)}
+  .room-meta{flex:1;font-size:12px;color:var(--dim)}
+  .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:800;letter-spacing:.5px}
+  .badge.green{background:rgba(31,204,88,.1);color:var(--green);border:1px solid rgba(31,204,88,.3)}
+  .badge.red{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+  .badge.blue{background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;right:24px;padding:14px 22px;background:var(--green);color:#000;
+    border-radius:14px;font-weight:700;font-size:13px;box-shadow:0 8px 30px rgba(31,204,88,.4);
+    transform:translateY(100px);opacity:0;transition:.3s;z-index:999}
+  .toast.show{transform:translateY(0);opacity:1}
+  .toast.error{background:var(--red);color:#fff;box-shadow:0 8px 30px rgba(239,68,68,.4)}
+
+  /* STATUS DOT */
+  .status-dot{width:8px;height:8px;border-radius:50%;margin-right:8px;display:inline-block;transition:.3s}
+  .status-dot.online{background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse 2s infinite}
+  .status-dot.offline{background:var(--red);box-shadow:0 0 10px var(--red)}
+  @keyframes pulse{0%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}100%{opacity:1;transform:scale(1)}}
+
+  /* LOADER */
+  .loader{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.2);
+    border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* SAVE BAR */
+  .save-bar{display:flex;gap:12px;padding-top:20px;border-top:1px solid var(--border);margin-top:4px}
+
+  /* NOTIF CARD */
+  .notif-item{display:flex;gap:16px;padding:16px;background:var(--surface2);border-radius:14px;margin-bottom:10px;align-items:flex-start}
+  .notif-icon{width:38px;height:38px;border-radius:12px;background:rgba(59,130,246,.1);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+  @media(max-width:900px){
+    .sidebar{display:none}
+    .main{max-width:100vw;padding:20px}
+    .col2{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div id="login">
+  <div class="login-card">
+    <div class="logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <h1>Admin Panel</h1>
+    <p>Leni Multiplayer Control Center</p>
+    <input class="field" id="pwd" type="password" placeholder="Senha de administrador" autocomplete="current-password"/>
+    <button class="btn" onclick="doLogin()">ENTRAR</button>
+    <p class="err" id="lerr"></p>
+  </div>
+</div>
+
+<!-- ═══════════════ DASHBOARD ═══════════════ -->
+<div id="app">
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="brand">LENI MULTIPLAYER<span>ADMIN PANEL</span></div>
+        </div>
+      </div>
+      <nav class="nav">
+        <div class="nav-section">CONTROLE</div>
+        <div class="nav-item active" onclick="goto('app-control', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          App Control
+        </div>
+        <div class="nav-item" onclick="goto('versions', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          Versões do Jogo
+        </div>
+        <div class="nav-item" onclick="goto('servers', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+          Servidores
+        </div>
+        <div class="nav-section">JOGADORES</div>
+        <div class="nav-item" onclick="goto('players', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Whitelist / Blacklist
+        </div>
+        <div class="nav-section">MENSAGENS</div>
+        <div class="nav-item" onclick="goto('message', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Mensagem Global
+        </div>
+        <div class="nav-item" onclick="goto('notify', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Notificações
+        </div>
+        <div class="nav-section">MONITOR</div>
+        <div class="nav-item" onclick="goto('sessions', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          Sessões Ativas
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div id="api-status" style="display:flex;align-items:center;font-size:10px;font-weight:800;letter-spacing:1px;color:var(--dim)">
+          <span class="status-dot online"></span> API: <span id="status-text">ONLINE</span>
+        </div>
+        <div id="sync-status" style="margin-top:6px;font-size:9px;color:var(--dim);opacity:.6">
+          SYNC: <span id="sync-time">---</span>
+        </div>
+        <div style="margin-top:10px">
+          <button class="btn-sm" style="background:transparent;border:1px solid var(--border);color:var(--dim);width:100%" onclick="logout()">SAIR</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+      <!-- APP CONTROL -->
+      <div class="page active" id="page-app-control">
+        <div class="page-header">
+          <div class="page-title">App Control</div>
+          <div class="page-sub">Controle o comportamento do aplicativo dos usuários</div>
+        </div>
+        <div class="card" id="card-app-control">
+          <div class="card-header"><span class="card-title green">ATUALIZAÇÃO FORÇADA</span></div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Forçar Atualização</div>
+              <div class="toggle-sub">Quando ativo, usuários com versão menor que a mínima são bloqueados</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="forceUpdate"><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">App Bloqueado</div>
+              <div class="toggle-sub">Bloqueia TODOS os usuários de usar o aplicativo</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="appBlocked"><span class="slider"></span></label>
+          </div>
+          <div style="margin-top:20px">
+            <div class="input-group">
+              <div class="label">Versão Mínima do App</div>
+              <input class="input" id="minAppVersion" placeholder="ex: 1.0.0" style="max-width:200px"/>
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn-sm green" onclick="saveAppControl()">SALVAR CONFIGURAÇÕES</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAME VERSIONS -->
+      <div class="page" id="page-versions">
+        <div class="page-header">
+          <div class="page-title">Versões do Jogo</div>
+          <div class="page-sub">Bloqueie versões específicas do Minecraft Bedrock</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title red">VERSÕES BLOQUEADAS</span></div>
+          <p style="font-size:12px;color:var(--dim);margin-bottom:16px">Jogadores com estas versões do Minecraft não conseguirão hospedar</p>
+          <div class="tag-list" id="blocked-versions-list"></div>
+          <div class="input-row" style="margin-top:16px">
+            <input class="input" id="new-version" placeholder="ex: 1.19.0"/>
+            <button class="btn-sm green" onclick="addBlockedVersion()">+ ADICIONAR</button>
+          </div>
+          <div class="save-bar">
+            <button class="btn-sm green" onclick="saveVersions()">SALVAR</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVERS -->
+      <div class="page" id="page-servers">
+        <div class="page-header">
+          <div class="page-title">Servidores</div>
+          <div class="page-sub">Bloqueie servidores/salas específicas por PIN ou UUID</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title red">SERVIDORES BLOQUEADOS</span></div>
+          <div class="tag-list" id="blocked-servers-list"></div>
+          <div class="input-row" style="margin-top:16px">
+            <input class="input" id="new-server" placeholder="PIN ou UUID do servidor"/>
+            <button class="btn-sm green" onclick="addBlockedServer()">+ ADICIONAR</button>
+          </div>
+          <div class="save-bar">
+            <button class="btn-sm green" onclick="saveServers()">SALVAR</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYERS -->
+      <div class="page" id="page-players">
+        <div class="page-header">
+          <div class="page-title">Whitelist / Blacklist</div>
+          <div class="page-sub">Controle quais jogadores podem ou não usar o sistema</div>
+        </div>
+        <div class="col2">
+          <div class="card">
+            <div class="card-header"><span class="card-title red">🚫 BLACKLIST</span></div>
+            <p style="font-size:12px;color:var(--dim);margin-bottom:12px">Jogadores bloqueados (por nickname)</p>
+            <div class="tag-list" id="blacklist-list"></div>
+            <div class="input-row" style="margin-top:12px">
+              <input class="input" id="new-blacklist" placeholder="Nickname do jogador"/>
+              <button class="btn-sm red" onclick="addBlacklist()">+ BANIR</button>
+            </div>
+            <div class="save-bar"><button class="btn-sm green" onclick="saveBlacklist()">SALVAR</button></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title green">✅ WHITELIST</span></div>
+            <p style="font-size:12px;color:var(--dim);margin-bottom:12px">Apenas estes jogadores podem entrar (deixe vazio para permitir todos)</p>
+            <div class="tag-list" id="whitelist-list"></div>
+            <div class="input-row" style="margin-top:12px">
+              <input class="input" id="new-whitelist" placeholder="Nickname do jogador"/>
+              <button class="btn-sm green" onclick="addWhitelist()">+ ADICIONAR</button>
+            </div>
+            <div class="save-bar"><button class="btn-sm green" onclick="saveWhitelist()">SALVAR</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GLOBAL MESSAGE -->
+      <div class="page" id="page-message">
+        <div class="page-header">
+          <div class="page-title">Mensagem Global</div>
+          <div class="page-sub">Exiba uma mensagem para todos os usuários na tela inicial</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title green">CONFIGURAÇÃO DA MENSAGEM</span></div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Mensagem Ativa</div>
+              <div class="toggle-sub">Quando ativo, a mensagem será exibida para todos na abertura do app</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="globalMessageActive"><span class="slider"></span></label>
+          </div>
+          <div style="margin-top:20px">
+            <div class="input-group">
+              <div class="label">Texto da Mensagem</div>
+              <textarea class="input" id="globalMessage" placeholder="Digite a mensagem global aqui..."></textarea>
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn-sm green" onclick="saveMessage()">SALVAR E PUBLICAR</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">PRÉVIA</span></div>
+          <div style="background:var(--surface2);border-radius:16px;padding:20px;text-align:center">
+            <div style="font-size:13px;color:var(--green);font-weight:700;margin-bottom:8px">⚠️ AVISO DO SISTEMA</div>
+            <div id="msg-preview" style="font-size:14px;color:var(--dim);font-style:italic">A mensagem aparecerá aqui...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="page" id="page-notify">
+        <div class="page-header">
+          <div class="page-title">Notificações</div>
+          <div class="page-sub">Envie notificações push para usuários específicos ou para todos</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title green">ENVIAR NOTIFICAÇÃO</span></div>
+          <div class="input-group">
+            <div class="label">Título</div>
+            <input class="input" id="notif-title" placeholder="Título da notificação"/>
+          </div>
+          <div class="input-group">
+            <div class="label">Mensagem</div>
+            <textarea class="input" id="notif-message" placeholder="Conteúdo da notificação..."></textarea>
+          </div>
+          <div class="input-group">
+            <div class="label">User ID (deixe em branco para enviar para TODOS)</div>
+            <input class="input" id="notif-userid" placeholder="User ID específico (opcional)"/>
+          </div>
+          <div class="save-bar">
+            <button class="btn-sm green" onclick="sendNotification(false)">📢 ENVIAR PARA TODOS</button>
+            <button class="btn-sm blue" onclick="sendNotification(true)">👤 ENVIAR PARA USUÁRIO</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SESSIONS -->
+      <div class="page" id="page-sessions">
+        <div class="page-header">
+          <div class="page-title">Sessões Ativas</div>
+          <div class="page-sub">Salas abertas no momento</div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-label">SALAS ATIVAS</div><div class="stat-value green" id="stat-rooms">–</div></div>
+          <div class="stat"><div class="stat-label">HOSTS ONLINE</div><div class="stat-value blue" id="stat-hosts">–</div></div>
+          <div class="stat"><div class="stat-label">JOGADORES</div><div class="stat-value orange" id="stat-players">–</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title green">ROOMS ONLINE</span>
+            <button class="btn-sm green" onclick="loadSessions()">↻ ATUALIZAR</button>
+          </div>
+          <div id="rooms-list"><div style="color:var(--dim);font-size:13px">Carregando...</div></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api';
+let SECRET = '';
+let CFG = {};
+
+// ─── LOGIN ───────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const pwd = document.getElementById('pwd').value.trim();
+  if (!pwd) return;
+  SECRET = pwd;
+  try {
+    const r = await fetch(`${API}/admin/config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': SECRET },
+      body: JSON.stringify({})
+    });
+    if (r.status === 401) { document.getElementById('lerr').textContent = '❌ Senha incorreta'; return; }
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadConfig();
+    loadSessions();
+  } catch (e) {
+    document.getElementById('lerr').textContent = '⚠️ Erro de conexão: ' + e.message;
+  }
+}
+document.getElementById('pwd').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function logout() {
+  SECRET = '';
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+function goto(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  if (el) el.classList.add('active');
+  if (page === 'sessions') loadSessions();
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+function toast(msg, isErr = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isErr ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─── STATUS ──────────────────────────────────────────────────────────────────
+function updateConnectivity(isOnline) {
+  const dot = document.querySelector('.status-dot');
+  const text = document.getElementById('status-text');
+  if (isOnline) {
+    dot.className = 'status-dot online';
+    text.textContent = 'ONLINE';
+    text.style.color = 'var(--green)';
+  } else {
+    dot.className = 'status-dot offline';
+    text.textContent = 'OFFLINE';
+    text.style.color = 'var(--red)';
+  }
+}
+
+// ─── CONFIG LOAD ─────────────────────────────────────────────────────────────
+async function loadConfig() {
+  try {
+    const r = await fetch(`${API}/admin/config`);
+    if (!r.ok) throw new Error('Status ' + r.status);
+    CFG = await r.json();
+    
+    if (CFG.lastUpdated) {
+      const date = new Date(CFG.lastUpdated);
+      document.getElementById('sync-time').textContent = date.toLocaleTimeString();
+    }
+    
+    // Update Control Fields
+    document.getElementById('forceUpdate').checked = CFG.forceUpdate || false;
+    document.getElementById('appBlocked').checked = CFG.appBlocked || false;
+    document.getElementById('minAppVersion').value = CFG.minAppVersion || '0.1.0';
+    
+    // Alert Card Styling
+    const card = document.getElementById('card-app-control');
+    if (CFG.appBlocked) card.classList.add('alert-active');
+    else card.classList.remove('alert-active');
+
+    // Tags & Lists
+    renderTags('blocked-versions-list', CFG.blockedVersions || [], 'red', removeBlockedVersion);
+    renderTags('blocked-servers-list', CFG.blockedServers || [], 'red', removeBlockedServer);
+    renderTags('blacklist-list', CFG.blacklist || [], 'red', removeBlacklist);
+    renderTags('whitelist-list', CFG.whitelist || [], 'green', removeWhitelist);
+    
+    // Message Section
+    document.getElementById('globalMessage').value = CFG.globalMessage || '';
+    document.getElementById('globalMessageActive').checked = CFG.globalMessageActive || false;
+    document.getElementById('msg-preview').textContent = CFG.globalMessage || 'A mensagem aparecerá aqui...';
+    
+    updateConnectivity(true);
+  } catch (e) {
+    updateConnectivity(false);
+    toast('❌ Falha ao sincronizar: ' + e.message, true);
+  }
+}
+
+// ─── SAVE HELPER ─────────────────────────────────────────────────────────────
+async function saveConfig(patch) {
+  try {
+    const r = await fetch(`${API}/admin/config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': SECRET },
+      body: JSON.stringify(patch)
+    });
+    if (r.status === 401) { toast('❌ Senha incorreta ou sem autorização', true); return false; }
+    if (!r.ok) { 
+        const err = await r.json();
+        toast(`❌ Erro no Servidor (${r.status}): ${err.error || 'Falha desconhecida'}`, true);
+        return false;
+    }
+    const data = await r.json();
+    if (data.config) {
+      CFG = data.config;
+      const date = new Date(CFG.lastUpdated);
+      document.getElementById('sync-time').textContent = date.toLocaleTimeString();
+    }
+    return true;
+  } catch (e) {
+    toast(`❌ Erro de Conexão: ${e.message}`, true);
+    return false;
+  }
+}
+
+// ─── APP CONTROL ─────────────────────────────────────────────────────────────
+async function saveAppControl() {
+  const ok = await saveConfig({
+    forceUpdate: document.getElementById('forceUpdate').checked,
+    appBlocked: document.getElementById('appBlocked').checked,
+    minAppVersion: document.getElementById('minAppVersion').value.trim() || '0.1.0',
+  });
+  if (ok) toast('✅ App control salvo!');
+}
+
+// ─── TAG RENDER ──────────────────────────────────────────────────────────────
+function renderTags(containerId, items, colorClass, removeFn) {
+  const el = document.getElementById(containerId);
+  if (!items.length) { el.innerHTML = '<span class="empty-tag">Nenhum item</span>'; return; }
+  el.innerHTML = items.map((item, i) =>
+    `<span class="tag ${colorClass}">${item}<button onclick="${removeFn.name}(${i})">✕</button></span>`
+  ).join('');
+}
+
+// ─── VERSIONS ────────────────────────────────────────────────────────────────
+function addBlockedVersion() {
+  const v = document.getElementById('new-version').value.trim();
+  if (!v) return;
+  if (!CFG.blockedVersions) CFG.blockedVersions = [];
+  if (CFG.blockedVersions.includes(v)) return;
+  CFG.blockedVersions.push(v);
+  renderTags('blocked-versions-list', CFG.blockedVersions, 'red', removeBlockedVersion);
+  document.getElementById('new-version').value = '';
+}
+function removeBlockedVersion(i) {
+  CFG.blockedVersions.splice(i, 1);
+  renderTags('blocked-versions-list', CFG.blockedVersions, 'red', removeBlockedVersion);
+}
+async function saveVersions() {
+  if (await saveConfig({ blockedVersions: CFG.blockedVersions })) toast('✅ Versões bloqueadas salvas!');
+}
+document.getElementById('new-version').addEventListener('keydown', e => { if (e.key === 'Enter') addBlockedVersion(); });
+
+// ─── SERVERS ─────────────────────────────────────────────────────────────────
+function addBlockedServer() {
+  const v = document.getElementById('new-server').value.trim();
+  if (!v) return;
+  if (!CFG.blockedServers) CFG.blockedServers = [];
+  if (CFG.blockedServers.includes(v)) return;
+  CFG.blockedServers.push(v);
+  renderTags('blocked-servers-list', CFG.blockedServers, 'red', removeBlockedServer);
+  document.getElementById('new-server').value = '';
+}
+function removeBlockedServer(i) {
+  CFG.blockedServers.splice(i, 1);
+  renderTags('blocked-servers-list', CFG.blockedServers, 'red', removeBlockedServer);
+}
+async function saveServers() {
+  if (await saveConfig({ blockedServers: CFG.blockedServers })) toast('✅ Servidores bloqueados salvos!');
+}
+
+// ─── BLACKLIST ────────────────────────────────────────────────────────────────
+function addBlacklist() {
+  const v = document.getElementById('new-blacklist').value.trim();
+  if (!v) return;
+  if (!CFG.blacklist) CFG.blacklist = [];
+  if (CFG.blacklist.includes(v)) return;
+  CFG.blacklist.push(v);
+  renderTags('blacklist-list', CFG.blacklist, 'red', removeBlacklist);
+  document.getElementById('new-blacklist').value = '';
+}
+function removeBlacklist(i) {
+  CFG.blacklist.splice(i, 1);
+  renderTags('blacklist-list', CFG.blacklist, 'red', removeBlacklist);
+}
+async function saveBlacklist() {
+  if (await saveConfig({ blacklist: CFG.blacklist })) toast('✅ Blacklist salva!');
+}
+document.getElementById('new-blacklist').addEventListener('keydown', e => { if (e.key === 'Enter') addBlacklist(); });
+
+// ─── WHITELIST ────────────────────────────────────────────────────────────────
+function addWhitelist() {
+  const v = document.getElementById('new-whitelist').value.trim();
+  if (!v) return;
+  if (!CFG.whitelist) CFG.whitelist = [];
+  if (CFG.whitelist.includes(v)) return;
+  CFG.whitelist.push(v);
+  renderTags('whitelist-list', CFG.whitelist, 'green', removeWhitelist);
+  document.getElementById('new-whitelist').value = '';
+}
+function removeWhitelist(i) {
+  CFG.whitelist.splice(i, 1);
+  renderTags('whitelist-list', CFG.whitelist, 'green', removeWhitelist);
+}
+async function saveWhitelist() {
+  if (await saveConfig({ whitelist: CFG.whitelist })) toast('✅ Whitelist salva!');
+}
+
+// ─── GLOBAL MESSAGE ──────────────────────────────────────────────────────────
+document.getElementById('globalMessage').addEventListener('input', function() {
+  document.getElementById('msg-preview').textContent = this.value || 'A mensagem aparecerá aqui...';
+});
+async function saveMessage() {
+  const ok = await saveConfig({
+    globalMessage: document.getElementById('globalMessage').value,
+    globalMessageActive: document.getElementById('globalMessageActive').checked,
+  });
+  if (ok) toast('✅ Mensagem global publicada!');
+}
+
+// ─── NOTIFICATIONS ───────────────────────────────────────────────────────────
+async function sendNotification(specific) {
+  const title = document.getElementById('notif-title').value.trim();
+  const message = document.getElementById('notif-message').value.trim();
+  const userId = document.getElementById('notif-userid').value.trim();
+  if (!title || !message) { toast('⚠️ Preencha título e mensagem', true); return; }
+  if (specific && !userId) { toast('⚠️ Informe o User ID', true); return; }
+  const r = await fetch(`${API}/admin/notify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-secret': SECRET },
+    body: JSON.stringify({ title, message, userId: specific ? userId : null })
+  });
+  if (r.status === 401) { toast('❌ Sem autorização', true); return; }
+  toast(specific ? `✅ Notificação enviada para ${userId}` : '✅ Notificação enviada para todos!');
+  document.getElementById('notif-title').value = '';
+  document.getElementById('notif-message').value = '';
+}
+
+// ─── SESSIONS ────────────────────────────────────────────────────────────────
+async function loadSessions() {
+  try {
+    const r = await fetch(`${API}/rooms`);
+    const data = await r.json();
+    const rooms = data.rooms || [];
+    document.getElementById('stat-rooms').textContent = rooms.length;
+    document.getElementById('stat-hosts').textContent = rooms.length;
+    const totalPlayers = rooms.reduce((s, r) => s + (parseInt(r.players || r.metadata?.players || 1)), 0);
+    document.getElementById('stat-players').textContent = totalPlayers;
+
+    const el = document.getElementById('rooms-list');
+    if (!rooms.length) { el.innerHTML = '<div style="color:var(--dim);font-size:13px;text-align:center;padding:20px">Nenhuma sala ativa</div>'; return; }
+    el.innerHTML = rooms.map(room => {
+      const pin = room.pin;
+      const world = room.worldName || room.metadata?.worldName || 'Mundo';
+      const host = room.hostName || room.metadata?.hostName || '?';
+      const players = room.players || room.metadata?.players || 1;
+      const max = room.maxPlayers || room.metadata?.maxPlayers || 10;
+      const age = Math.floor((Date.now() - room.timestamp) / 1000);
+      return `<div class="room-row">
+        <div>
+          <div class="room-pin">${pin}</div>
+        </div>
+        <div class="room-meta">
+          <div style="color:var(--text);font-weight:700;margin-bottom:4px">${world}</div>
+          <div>Host: <span style="color:var(--blue);cursor:pointer;text-decoration:underline" onclick="setNotifyTarget('${host}')">${host}</span> · ${players}/${max} jogadores · ${age}s atrás</div>
+        </div>
+        <button class="btn-sm red" onclick="banHost('${host}')">BANIR HOST</button>
+        <button class="btn-sm red" onclick="forceCloseRoom('${pin}')">FECHAR</button>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    document.getElementById('rooms-list').innerHTML = `<div style="color:var(--red);font-size:13px">Erro: ${e.message}</div>`;
+  }
+}
+
+function setNotifyTarget(nick) {
+  goto('notify');
+  document.getElementById('notif-userid').value = nick;
+  document.getElementById('notif-title').value = 'MENSAGEM DO ADMIN';
+}
+
+async function forceCloseRoom(pin) {
+  if (!confirm(`Fechar sala ${pin}?`)) return;
+  await fetch(`${API}/room/${pin}`, { method: 'DELETE' });
+  toast(`✅ Sala ${pin} fechada`);
+  loadSessions();
+}
+
+async function banHost(nick) {
+  if (!nick || nick === '?') return;
+  if (!confirm(`TEM CERTEZA? Isso banirá o jogador "${nick}" globalmente.`)) return;
+  
+  if (!CFG.blacklist) CFG.blacklist = [];
+  if (!CFG.blacklist.includes(nick)) {
+    CFG.blacklist.push(nick);
+    const ok = await saveConfig({ blacklist: CFG.blacklist });
+    if (ok) {
+      toast(`🚫 Host "${nick}" banido com sucesso!`);
+      // Optionally close their room too
+      loadConfig();
+    }
+  } else {
+    toast(`ℹ️ "${nick}" já está na blacklist`);
+  }
+}
+
+// Auto-refresh sessions every 15s
+setInterval(() => {
+  if (document.getElementById('page-sessions').classList.contains('active')) loadSessions();
+}, 15000);
+</script>
+</body>
+</html>
