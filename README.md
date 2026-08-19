@@ -1,174 +1,177 @@
 # 🌐 Leni Multiplayer
 
-**Jogue Minecraft Bedrock online com amigos, grátis e sem complicação.**
+**Play Minecraft Bedrock online with friends, for free and without hassle.**
 
-O **Leni Multiplayer** é um aplicativo que permite jogar **Minecraft Bedrock Edition online com amigos** sem precisar de Xbox Live Gold, Realms, servidores pagos ou configurações complicadas de roteador. Eleconecta jogadores de qualquer lugar do mundo.
+**Leni Multiplayer** is an app that allows you to play **Minecraft Bedrock Edition online with friends** without requiring Xbox Live Gold, Realms, paid servers, or complicated router port-forwarding settings. It connects players from anywhere in the world.
 
-- 🌍 **Site oficial:** [https://leni.ddns.net](https://leni.ddns.net)
+- 🌍 **Official Website:** [https://leni.ddns.net](https://leni.ddns.net)
 - 💬 **Discord:** [https://dsc.gg/leni](https://dsc.gg/leni)
 
-> **Em uma frase:** O Leni transforma o mundo do seu Minecraft em uma sala online que seus amigos podem entrar usando apenas um código de 6 letras.
+> **In a nutshell:** Leni turns your local Minecraft world into an online room that your friends can join using just a 6-letter code.
 
 ---
 
-## 📖 Sumário
+## 📖 Table of Contents
 
-- [O que é o Leni Multiplayer?](#-o-que-é-o-leni-multiplayer)
-- [Como funciona](#-como-funciona)
-- [Funcionalidades](#-funcionalidades)
-- [O Site (leni.ddns.net)](#-o-site-leniddnsnet)
-- [Plataformas suportadas](#-plataformas-suportadas)
-- [Contas e privacidade](#-contas-e-privacidade)
-- [Idiomas](#-idiomas)
-- [Arquitetura Técnica](#-arquitetura-técnica)
-- [Estrutura do Repositório](#-estrutura-do-repositório)
-- [FAQ](#-perguntas-frequentes)
-- [Licença e Créditos](#-licença-e-créditos)
+- [What is Leni Multiplayer?](#-what-is-leni-multiplayer)
+- [How It Works](#-how-it-works)
+- [Features](#-features)
+- [The Website (leni.ddns.net)](#-the-website-leniddnsnet)
+- [Supported Platforms](#-supported-platforms)
+- [Accounts & Privacy](#-accounts--privacy)
+- [Supported Languages](#-supported-languages)
+- [Technical Architecture](#-technical-architecture)
+- [Repository Structure](#-repository-structure)
+- [FAQ](#-frequently-asked-questions)
+- [License & Credits](#-license--credits)
 
 ---
 
-## 🎮 O que é o Leni Multiplayer?
+## 🎮 What is Leni Multiplayer?
 
-O **Minecraft Bedrock** foi feito para jogar apenas com quem está na mesma rede Wi-Fi (modo LAN). O Leni quebra essa barreira e funciona como um **túnel mágico** que conecta jogadores de qualquer lugar do mundo.
+**Minecraft Bedrock** was designed to be played only with people on the same Wi-Fi network (LAN mode). Leni breaks this barrier and acts as a **magic tunnel** connecting players from anywhere in the world.
 
+---
 
-## ✨ Funcionalidades
+## ✨ Features
 
-### 🏠 Tela Inicial (Feed)
-- Feed de publicações da comunidade (conquistas, posts)
-- Prévia da loja e destaques
-- Notícias e anúncios oficiais
+### 🏠 Home Screen (Feed)
+- Community post feed (achievements, posts)
+- Store previews and highlights
+- Official news and announcements
 
-### 🎮 Aba "Jogar"
-- **Lobby global:** navegue por salas ativas em tempo real
-- **Filtros:** por versão do Minecraft, esconder salas cheias, etc.
-- **Hospedar:** crie sua própria sala com PIN de 6 letras
-- **Salas com senha:** tranque a sala (só entra quem sabe a senha)
-- **Servidores:** lista de servidores da comunidade
-- **Torneios:** participe de torneios com prêmios
+### 🎮 "Play" Tab
+- **Global Lobby:** browse active rooms in real time
+- **Filters:** filter by Minecraft version, hide full rooms, etc.
+- **Host:** create your own room with a 6-letter PIN
+- **Password-Protected Rooms:** lock your room (only people with the password can enter)
+- **Servers:** community server list
+- **Tournaments:** participate in tournaments with prizes
 
-### 👥 Aba "Social"
-- **Amigos:** adicione, veja quem está online e converse
-- **Chat privado:** conversas 1:1, grupos e comunidades
-- **Chamadas de voz** (overlay de chamada integrado)
-- **Ranking global:** XP, moedas, seguidores e doadores
-- **Feed:** publique conquistas e interaja com posts de outros jogadores
-- **Perfil:** personalize avatar, banner, insígnias e tema
-- **Visualizador de skin 3D**
-- **Notificações** (push via Firebase)
+### 👥 "Social" Tab
+- **Friends:** add friends, see who is online, and chat
+- **Private Chat:** 1:1 direct messages, groups, and communities
+- **Voice Calls** (integrated call overlay)
+- **Global Leaderboard:** XP, coins, followers, and donors
+- **Feed:** share achievements and interact with posts from other players
+- **Profile:** customize your avatar, banner, badges, and theme
+- **3D Skin Viewer**
+- **Notifications** (push via Firebase)
 
-### 🏪 Loja
-- Compre itens exclusivos com moedas do jogo
-- **Plano VIP (DIAMOND):**
-  - Salas de até **30 jogadores** (15 no gratuito)
-  - Frames de avatar especiais
-  - Temas de perfil personalizados
-  - Badges (insígnias) exclusivas
-- **Moedas** para usar na loja
+### 🏪 Store
+- Buy exclusive items using in-game coins
+- **VIP Plan (DIAMOND):**
+  - Rooms up to **30 players** (15 on the free tier)
+  - Special avatar frames
+  - Custom profile themes
+  - Exclusive badges
+- **Coins** to spend in the store
 
 ### 🧩 Addons
-- **Mercado de addons:** baixe e instale addons/mods de Minecraft
-- Upload e gerenciamento de addons pela comunidade
+- **Addon Marketplace:** download and install Minecraft addons/mods
+- Addon uploading and management by the community
 
+---
 
-## 🌍 O Site (leni.ddns.net)
+## 🌍 The Website (leni.ddns.net)
 
-O site é o **hub oficial** do Leni Multiplayer, servido pelo próprio backend em `leni.ddns.net`:
+The website serves as the **official hub** for Leni Multiplayer, hosted directly by its backend at `leni.ddns.net`:
 
-- **Landing page** com hero, slogan e botão de download
-- **Estatísticas em tempo real:** usuários registrados, salas ativas, jogadores online, total doado e notícias publicadas
-- **Notícias:** últimas novidades do projeto
-- **Downloads:** tabela dinâmica com as versões mais recentes:
+- **Landing page** featuring a hero section, tagline, and download button
+- **Real-time statistics:** registered users, active rooms, online players, total donated, and published news
+- **News:** latest project updates
+- **Downloads:** dynamic list featuring the latest releases:
   - Android 64-bit (APK)
   - Android 32-bit (APK)
-- **Multi-idioma** (PT, EN, ES, RU, VI) com seletor de idioma
-- **Deep links:** links de `leni.ddns.net` abrem direto no app instalado (web-to-app)
+- **Multi-language support** (PT, EN, ES, RU, VI) with a language selector
+- **Deep links:** links from `leni.ddns.net` open directly inside the installed app (web-to-app)
 
 ---
 
-## 📱 Plataformas suportadas
+## 📱 Supported Platforms
 
-| Plataforma | Suporte | Formato |
-|-----------|---------|---------|
-| 📱 Android | ✅ Estável | APK (64-bit e 32-bit) |
-| 🖥️ Windows | 🚧 Em desenvolvimento | — |
-| 🍏 iOS | 🚧 Em desenvolvimento | — |
+| Platform | Status | Format |
+| :--- | :--- | :--- |
+| 📱 Android | ✅ Stable | APK (64-bit & 32-bit) |
+| 🖥️ Windows | 🚧 In Development | — |
+| 🍏 iOS | 🚧 In Development | — |
 
-**Requisitos:** Minecraft **Bedrock Edition** (qualquer dispositivo que rode a versão Bedrock).
-
----
-
-## 🔒 Contas e privacidade
-
-### Criar conta
-- **Gratuito** — não precisa de email se não quiser
-- Escolha um **nick** (apelido) e uma senha
-- Jogue como **convidado** sem criar conta (algumas funções ficam limitadas)
-- Login com **Google** (opcional)
-
-### Privacidade
-- Controle quem vê seu status online
-- Escolha se aparece ou não no ranking
-- Esconda suas moedas do perfil público
-- Verificação de email (opcional)
-- Opção de excluir sua conta
+**Requirements:** Minecraft **Bedrock Edition** (any device capable of running Bedrock).
 
 ---
 
-## 🌐 Idiomas disponíveis
+## 🔒 Accounts & Privacy
 
-- 🇧🇷 Português (Brasil)
-- 🇺🇸 Inglês (EUA)
-- 🇪🇸 Espanhol
-- 🇷🇺 Russo
-- 🇻🇳 Vietnamita
-- 🇮🇩 Indonésio
+### Account Creation
+- **Free** — no email required if you don't want to use one
+- Pick a **nickname** and password
+- Play as a **guest** without creating an account (some features will be restricted)
+- Sign in with **Google** (optional)
 
-
-## ❓ Perguntas Frequentes
-
-**Precisa de Xbox Live Gold?**
-Não! O Leni funciona completamente fora do ecossistema Xbox.
-
-**Funciona no iPhone?**
-Atualmente o app está disponível apenas para **Android**. O iOS está em desenvolvimento.
-
-**Quantos jogadores podem jogar?**
-Até **30 jogadores**.
-
-**O jogo fica lento?**
-A latência depende da internet de cada um, mas por ser **P2P** (conexão direta), costuma ser tão rápida quanto uma partida local.
-
-**Precisa ter o Minecraft aberto para hospedar?**
-Sim! O Leni espelha o mundo que está rodando no seu Minecraft.
-
-**Meus dados passam pelo servidor de vocês?**
-Não. O tráfego de jogo é **P2P direto** entre os jogadores. O servidor faz apenas a negociação inicial da conexão.
+### Privacy
+- Control who sees your online status
+- Choose whether or not you appear on the leaderboard
+- Hide your coin balance on your public profile
+- Email verification (optional)
+- Option to delete your account
 
 ---
 
-## 📝 Notas da Versão
+## 🌐 Supported Languages
 
-**Versão atual:** `1.0.71` (Beta)
-
-O app está em **desenvolvimento ativo** — novas funcionalidades são adicionadas regularmente.
-
----
-
-## 🆘 Precisa de ajuda?
-
-- Acesse o menu **"Apoiar"** (coração vermelho) dentro do app
-- Entre no [Discord](https://dsc.gg/leni)
-- Acesse o site em [leni.ddns.net](https://leni.ddns.net)
+- 🇧🇷 Portuguese (Brazil)
+- 🇺🇸 English (US)
+- 🇪🇸 Spanish
+- 🇷🇺 Russian
+- 🇻🇳 Vietnamese
+- 🇮🇩 Indonesian
 
 ---
 
-## 📄 Licença e Créditos
+## ❓ Frequently Asked Questions
 
-- **Leni Multiplayer** © 2024–2026 — Feito por jogadores para jogadores 🎮
-- *Minecraft* é uma marca registrada da Mojang Studios. Este projeto não é afiliado à Mojang ou Microsoft.
-- Imagens, fontes e recursos de terceiros pertencem aos seus respectivos donos.
+**Do I need Xbox Live Gold?**  
+No! Leni operates completely outside the Xbox ecosystem.
+
+**Does it work on iPhone?**  
+Currently, the app is only available for **Android**. The iOS version is under development.
+
+**How many players can join a room?**  
+Up to **30 players**.
+
+**Does the game lag?**  
+Latency depends on each player's internet connection, but because it relies on **P2P** (direct connection), it is typically as fast as playing on a local network.
+
+**Do I need to keep Minecraft open to host?**  
+Yes! Leni mirrors the world currently running on your Minecraft client.
+
+**Does my game data go through your servers?**  
+No. Game traffic is **direct P2P** between players. The server only handles the initial connection negotiation (handshake).
 
 ---
 
-*Leni Multiplayer — Transformando Minecraft LAN em diversão online global.* 🌎
+## 📝 Release Notes
+
+**Current Version:** `1.0.71` (Beta)
+
+The app is under **active development** — new features are added regularly.
+
+---
+
+## 🆘 Need Help?
+
+- Access the **"Support"** menu (red heart icon) inside the app
+- Join our [Discord](https://dsc.gg/leni)
+- Visit our website at [leni.ddns.net](https://leni.ddns.net)
+
+---
+
+## 📄 License & Credits
+
+- **Leni Multiplayer** © 2024–2026 — Built by gamers for gamers 🎮
+- *Minecraft* is a registered trademark of Mojang Studios. This project is not affiliated with Mojang or Microsoft.
+- Third-party images, fonts, and assets belong to their respective owners.
+
+---
+
+*Leni Multiplayer — Turning Minecraft LAN into global online fun.* 🌎
