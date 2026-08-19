@@ -149,7 +149,7 @@ Não. O tráfego de jogo é **P2P direto** entre os jogadores. O servidor faz ap
 
 ## 📝 Notas da Versão
 
-**Versão atual:** `0.9.9995+2021` (Beta)
+**Versão atual:** `1.0.71` (Beta)
 
 O app está em **desenvolvimento ativo** — novas funcionalidades são adicionadas regularmente.
 
